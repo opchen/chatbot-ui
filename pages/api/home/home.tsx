@@ -410,7 +410,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   const googleCSEId = process.env.GOOGLE_CSE_ID;
 
   if (googleApiKey && googleCSEId) {
-    serverSidePluginKeysSet = true;
+    serverSidePluginKeysSet = false;
   }
 
   return {
