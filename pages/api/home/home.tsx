@@ -5,6 +5,7 @@ import { GetServerSideProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -39,18 +40,21 @@ import Promptbar from '@/components/Promptbar';
 import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
+import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
+  user: string;
 }
 
 const Home = ({
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
+  user,
 }: Props) => {
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -248,6 +252,7 @@ const Home = ({
       });
   }, [defaultModelId, serverSideApiKeyIsSet, serverSidePluginKeysSet]);
 
+  const router = useRouter();
   // ON LOAD --------------------------------------------
 
   useEffect(() => {
@@ -257,6 +262,11 @@ const Home = ({
         field: 'lightMode',
         value: settings.theme,
       });
+    }
+
+    // 检查用户是否登录
+    if (!user) {
+      router.push('/login');
     }
 
     const apiKey = localStorage.getItem('apiKey');
@@ -395,7 +405,10 @@ const Home = ({
 };
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
   const defaultModelId =
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
@@ -413,19 +426,43 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     serverSidePluginKeysSet = true;
   }
 
-  return {
-    props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
-      defaultModelId,
-      serverSidePluginKeysSet,
-      ...(await serverSideTranslations(locale ?? 'en', [
-        'common',
-        'chat',
-        'sidebar',
-        'markdown',
-        'promptbar',
-        'settings',
-      ])),
-    },
-  };
+  // 从请求头中获取令牌
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  let user = '';
+
+  if (!token) {
+    // 令牌不存在，用户未登录
+    // user = 'aa';
+  }
+
+  try {
+    if (typeof token !== 'undefined') {
+      const decodedToken = jwt.verify(token, 'lvjoivowirknvglrwkk') as {
+        username: string;
+      };
+      user = decodedToken.username;
+    }
+
+    return {
+      props: {
+        serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
+        defaultModelId,
+        serverSidePluginKeysSet,
+        user,
+        ...(await serverSideTranslations(locale ?? 'en', [
+          'common',
+          'chat',
+          'sidebar',
+          'markdown',
+          'promptbar',
+          'settings',
+        ])),
+      },
+    };
+  } catch (error) {
+    // 令牌验证失败，用户未登录
+    return {
+      props: {},
+    };
+  }
 };
