@@ -34,13 +34,13 @@ const LoginPage = () => {
 
   return (
     <div className="login-page">
-      <div className="ad-container">
+      {/* <div className="ad-container">
         <img
           className="ad-image"
           src="/path/to/ad-image.jpg"
           alt="Advertisement"
         />
-      </div>
+      </div> */}
       <div className="form-container">
         <h1>输入账号和密码登录</h1>
         <form onSubmit={handleLogin}>

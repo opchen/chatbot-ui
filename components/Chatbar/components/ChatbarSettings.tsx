@@ -33,6 +33,7 @@ export const ChatbarSettings = () => {
     handleClearConversations,
     handleImportConversations,
     handleExportData,
+    handleLogout,
     handleApiKeyChange,
   } = useContext(ChatbarContext);
 
@@ -60,7 +61,13 @@ export const ChatbarSettings = () => {
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
       ) : null}
 
-      {!serverSidePluginKeysSet ? <PluginKeys /> : null}
+      <SidebarButton
+        text={t('Logout')}
+        icon={<IconSettings size={18} />}
+        onClick={() => handleLogout()}
+      />
+
+      {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
 
       <SettingDialog
         open={isSettingDialogOpen}

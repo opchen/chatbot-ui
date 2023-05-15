@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -96,6 +97,14 @@ export const Chatbar = () => {
 
   const handleExportData = () => {
     exportData();
+  };
+  const router = useRouter();
+
+  const handleLogout = () => {
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT';
+
+    // 刷新页面
+    router.reload();
   };
 
   const handleImportConversations = (data: SupportedExportFormats) => {
@@ -214,6 +223,7 @@ export const Chatbar = () => {
         handleClearConversations,
         handleImportConversations,
         handleExportData,
+        handleLogout,
         handlePluginKeyChange,
         handleClearPluginKey,
         handleApiKeyChange,
