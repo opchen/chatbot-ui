@@ -437,7 +437,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   try {
     if (typeof token !== 'undefined') {
-      const decodedToken = jwt.verify(token, 'lvjoivowirknvglrwkk') as {
+      const decodedToken = jwt.verify(token, 'slkfjsklfjwmrp39rm42dsskk') as {
         username: string;
       };
       user = decodedToken.username;
