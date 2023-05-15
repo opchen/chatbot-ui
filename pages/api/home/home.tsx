@@ -427,7 +427,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   }
 
   // 从请求头中获取令牌
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const { token } = req.cookies;
   let user = '';
 
   if (!token) {

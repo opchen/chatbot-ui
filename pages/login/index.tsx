@@ -12,7 +12,7 @@ const LoginPage = () => {
 
     // 执行登录逻辑，发送 POST 请求到后端进行身份验证
     try {
-      const response = await fetch('https://opchen.com/api/login', {
+      const response = await fetch('/api/customerLogin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
