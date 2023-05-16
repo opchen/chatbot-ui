@@ -1,0 +1,11 @@
+@media (min-width: 640px) {
+  .advert {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .advert {
+    display: none;
+  }
+}
